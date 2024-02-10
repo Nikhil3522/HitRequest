@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="background-color: black; color: white;">
+
+    <p>Hi, <span id="response"></span></p>
+    <p id="last-update"></p>
+    
+    <script>
+        function makeRequest() {
+        // Use the Fetch API to make a GET request
+        fetch("https://www.backend.dateuni.in/test")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response:", data);
+
+                // Get the current date and time in IST
+                const currentDate = new Date();
+                const ISTOffset = 330; // 5 hours and 30 minutes offset in minutes
+                const ISTTime = new Date(currentDate.getTime() + ISTOffset * 60000);
+
+                // Get hours and minutes in IST
+                const hoursIST = ISTTime.getHours();
+                const minutesIST = ISTTime.getMinutes();
+
+                // Format the result (optional)
+                const formattedTimeIST = `${hoursIST < 10 ? '0' + hoursIST : hoursIST}:${minutesIST < 10 ? '0' + minutesIST : minutesIST}`;
+
+                // Print or use the result
+                console.log(formattedTimeIST); // Example: "14:30"
+
+
+                document.getElementById("response").innerHTML = data;
+                document.getElementById("last-update").innerHTML = formattedTimeIST;
+
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+    }
+
+    // Set up an interval to make the request every 8 minutes (8 * 60 * 1000 milliseconds)
+    setInterval(makeRequest, 8 * 60 * 1000);
+
+    // Initial request (optional, if you want to make the request immediately)
+    makeRequest();
+
+    </script>
+</body>
+</html>
